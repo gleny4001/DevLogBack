@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+    postgres:
+        image: postgres:15
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 6788
+            POSTGRES_DB: devlog
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+
+    backend:
+        build: .
+        restart: always
+        env_file:
+            - .env
+        ports:
+            - "3001:3001"
+        depends_on:
+            - postgres
+        volumes:
+            - .:/usr/src/app
+        command: >
+            sh -c "
+              npx prisma migrate deploy &&
+              npx prisma generate &&
+              npm run dev
+            "
+
+volumes:
+    pgdata:

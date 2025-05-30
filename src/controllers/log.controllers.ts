@@ -4,9 +4,16 @@ import { prisma } from "../prisma/client";
 
 export const createLog = async (req: Request, res: Response) => {
     try {
-        const { title, whatIDid, whatsNext, bug, score } = req.body;
+        const { title, whatIDid, whatsNext, bug, score, projectId } = req.body;
         const log = await prisma.log.create({
-            data: { title, whatIDid, whatsNext, bug, score },
+            data: {
+                title,
+                whatIDid,
+                whatsNext,
+                bug,
+                score,
+                project: { connect: { id: projectId } },
+            },
         });
         res.status(201).json(log);
     } catch (err) {

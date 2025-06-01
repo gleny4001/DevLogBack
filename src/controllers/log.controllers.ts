@@ -1,4 +1,3 @@
-// src/controllers/log.controller.ts
 import { Request, Response } from "express";
 import { prisma } from "../prisma/client";
 
@@ -21,9 +20,16 @@ export const createLog = async (req: Request, res: Response) => {
     }
 };
 
-export const getLogs = async (_req: Request, res: Response) => {
+export const getLogs = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    if (!projectId) {
+        res.status(400).json({ error: "Project ID is required" });
+        return;
+    }
+
     try {
         const logs = await prisma.log.findMany({
+            where: { projectId },
             orderBy: { createdAt: "desc" },
         });
         res.json(logs);

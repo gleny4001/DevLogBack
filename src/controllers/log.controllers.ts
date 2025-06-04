@@ -41,6 +41,11 @@ export const getLogs = async (req: Request, res: Response) => {
         const logs = await prisma.log.findMany({
             where: { projectId },
             orderBy: { createdAt: "desc" },
+            include: {
+                project: {
+                    select: { name: true },
+                },
+            },
         });
         res.json(logs);
     } catch (err) {

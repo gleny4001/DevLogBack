@@ -8,10 +8,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          String    @id @default(uuid())
+  firebaseUid String    @unique
+  email       String    @unique
+  name        String?
+  createdAt   DateTime  @default(now())
+
+  projects    Project[]
+}
+
 model Project {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
   log       Log[]
 }
 
@@ -21,8 +35,7 @@ model Log {
   updatedAt  DateTime @updatedAt
   whatIDid   String[]
   whatsNext  String[]
-  bug        String[] // this is fine as an array if you expect multiple bugs
-
+  bug        String[]
   projectId  String
   project    Project  @relation(fields: [projectId], references: [id])
 

@@ -4,13 +4,7 @@ import { prisma } from "../prisma/client";
 export const createProject = async (req: Request, res: Response) => {
     try {
         const { name } = req.body;
-        const firebaseUid = req.user.uid;
-        const email = req.user.email;
-        const displayName = req.user.name;
-
-        if (!firebaseUid || !email) {
-            res.status(400).json({ error: "Missing user info" });
-        }
+        const { uid: firebaseUid, email, name: displayName } = req.user;
 
         // Check if user exists in DB, otherwise create
         let user = await prisma.user.findUnique({
@@ -44,10 +38,6 @@ export const createProject = async (req: Request, res: Response) => {
 export const getProjects = async (req: Request, res: Response) => {
     try {
         const firebaseUid = req.user?.uid;
-
-        if (!firebaseUid) {
-            res.status(401).json({ error: "Unauthorized" });
-        }
 
         const user = await prisma.user.findUnique({
             where: { firebaseUid },

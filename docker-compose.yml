@@ -1,6 +1,8 @@
+name: devlog
 version: "3.9"
 services:
     postgres:
+        container_name: devlog-postgres
         image: postgres:15
         restart: always
         environment:
@@ -8,17 +10,19 @@ services:
             POSTGRES_PASSWORD: 6788
             POSTGRES_DB: devlog
         volumes:
-            - pgdata:/var/lib/postgresql/data
+            - devlog-pgdata:/var/lib/postgresql/data
         ports:
             - "5432:5432"
 
     backend:
+        container_name: devlog-backend
         build: .
         restart: always
         env_file:
             - .env
         ports:
             - "3001:3001"
+            - "5555:5555" #for npx prisma studio
         depends_on:
             - postgres
         volumes:
@@ -37,4 +41,4 @@ services:
             "
 
 volumes:
-    pgdata:
+    devlog-pgdata:

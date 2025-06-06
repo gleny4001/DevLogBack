@@ -4,7 +4,12 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function createTodoFromLog(log: any) {
+type Log = {
+    whatIDid: string[];
+    whatsNext: string[];
+    bug: string[];
+};
+export async function createTodoFromLog(log: Log) {
     try {
         const prompt = `You're an AI assistant. Based on daily log, return a JSON array of todo list for next day based on the log, like this:
 [
@@ -29,6 +34,7 @@ Return only valid JSON. No markdown. No explanation. No backticks.`;
         });
 
         const content = response.choices[0].message?.content;
+        console.log(content);
         if (!content) {
             throw new Error("OpenAI did not return content");
         }

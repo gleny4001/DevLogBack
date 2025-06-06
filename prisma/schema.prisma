@@ -14,7 +14,6 @@ model User {
   email       String    @unique
   name        String?
   createdAt   DateTime  @default(now())
-
   projects    Project[]
 }
 
@@ -22,31 +21,28 @@ model Project {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
-
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
   log       Log[]
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Log {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  whatIDid   String[]
-  whatsNext  String[]
-  bug        String[]
-  projectId  String
-  project    Project  @relation(fields: [projectId], references: [id])
-
-  todo       Todo?   
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  whatIDid  String[]
+  whatsNext String[]
+  bug       String[]
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  todo      Todo? 
 }
 
 model Todo {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  todos     Json     // structured array of category objects
-
-  logId     String   @unique             
+  todos     Json
+  logId     String   @unique              
   log       Log      @relation(fields: [logId], references: [id])
 }
+

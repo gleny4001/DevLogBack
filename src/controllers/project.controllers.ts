@@ -35,6 +35,48 @@ export const createProject = async (req: Request, res: Response) => {
     }
 };
 
+export const getProjectByID = async (req: Request, res: Response) => {
+    try {
+        const firebaseUid = req.user?.uid;
+        const projectId = req.params.projectId;
+
+        if (!projectId) {
+            res.status(400).json({ error: "Project ID is required" });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { firebaseUid },
+        });
+
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        const project = await prisma.project.findFirst({
+            where: { userId: user.id, id: projectId },
+            include: {
+                log: {
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                    include: {
+                        todo: true,
+                    },
+                },
+            },
+        });
+
+        if (!project) {
+            res.status(404).json({ error: "Project not found" });
+        }
+
+        res.json(project);
+    } catch (err) {
+        res.status(500).json({ error: "Failed get project" });
+    }
+};
+
 export const getProjects = async (req: Request, res: Response) => {
     try {
         const firebaseUid = req.user?.uid;
